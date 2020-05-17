@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 
-import { Input } from './components';
+import { expandColor } from './utilities';
+
+const Input = styled.input``;
 
 const Result = styled.div`
   width: 500px;
@@ -11,94 +13,28 @@ const Result = styled.div`
 
 export const App = () => {
   const [inputValue, setInputValue] = useState('');
-  const [colorHex, setColorHex] = useState('');
-  const [lightColorSet, setLightColorSet] = useState([]);
-  const [lightColorGenerationComplete, setLightColorGenerationComplete] = useState(false);
-  const [darkColorSet, setDarkColorSet] = useState([]);
-  const [darkColorGenerationComplete, setDarkColorGenerationComplete] = useState(false);
+  const [colorSet, setColorSet] = useState([]);
 
-  const handleChange = ({ target: { value } }) => {
-    console.log('HANDLE CHANGE...', );
-    setInputValue(value);
-    if (value[0] === '#') {
-      const [hashSign, ...hexCode] = value;
-      if (hexCode.length !== 3 && hexCode.length !== 6) return hashSign;
-      setLightColorSet([]);
-      setLightColorGenerationComplete(false);
-      setDarkColorSet([]);
-      setDarkColorGenerationComplete(false);
-      setColorHex(hexCode);
+  const handleChange = ({ target: { value } }) => setInputValue(value);
+  const handleClick = () => {
+    const { hashSymbol, ...hexCode } = inputValue;
+    const colorHex = inputValue[0] === '#'
+      ? hexCode
+      : inputValue;
+    if (colorHex.length === 3) {
+      setColorSet(expandColor(`${colorHex[0]}${colorHex[0]}${colorHex[1]}${colorHex[1]}${colorHex[2]}${colorHex[2]}`));
+    } else if (colorHex.length === 6) {
+      setColorSet(expandColor(colorHex));
     }
-    if (value.length !== 3 && value.length !== 6) return;
-    setLightColorSet([]);
-    setLightColorGenerationComplete(false);
-    setDarkColorSet([]);
-    setDarkColorGenerationComplete(false);
-    setColorHex(value);
-  }
-
-  useEffect(() => {
-    if (darkColorGenerationComplete) return;
-    if (colorHex === '000000' || colorHex === '000') return;
-    let nextColorHex = colorHex;
-    let newColorSet = [colorHex];
-    while(nextColorHex !== '000000' && nextColorHex !== '000') {
-      let redChannel = '';
-      let greenChannel = '';
-      let blueChannel = '';
-      if (nextColorHex.length === 3) {
-        redChannel = nextColorHex[0];
-        greenChannel = nextColorHex[1];
-        blueChannel = nextColorHex[2];
-      } else if (nextColorHex.length === 6) {
-        redChannel = `${nextColorHex[0]}${nextColorHex[1]}`;
-        greenChannel = `${nextColorHex[2]}${nextColorHex[3]}`;
-        blueChannel = `${nextColorHex[4]}${nextColorHex[5]}`;
-      }
-      const nextRed = parseInt(redChannel) - 1 > -1 ? parseInt(redChannel) - 1 : 0;
-      const nextGreen = parseInt(greenChannel) - 1 > -1 ? parseInt(greenChannel) - 1 : 0;
-      const nextBlue = parseInt(blueChannel) - 1 > -1 ? parseInt(blueChannel) - 1 : 0;
-      nextColorHex = `${nextRed.toString(16)}${nextGreen.toString(16)}${nextBlue.toString(16)}`;
-      newColorSet.push(nextColorHex);
-      if (nextColorHex === '000000' || nextColorHex === '000') setDarkColorGenerationComplete(true);
-    }
-    setDarkColorSet(newColorSet);
-  }, [colorHex, darkColorSet, darkColorGenerationComplete]);
-
-  useEffect(() => {
-    if (lightColorGenerationComplete) return;
-    if (colorHex === 'ffffff' || colorHex === 'fff') return;
-    let nextColorHex = colorHex;
-    let newColorSet = [];
-    while(nextColorHex !== 'ffffff' && nextColorHex !== 'fff') {
-      let redChannel = '';
-      let greenChannel = '';
-      let blueChannel = '';
-      if (nextColorHex.length === 3) {
-        redChannel = nextColorHex[0];
-        greenChannel = nextColorHex[1];
-        blueChannel = nextColorHex[2];
-      } else if (nextColorHex.length === 6) {
-        redChannel = `${nextColorHex[0]}${nextColorHex[1]}`;
-        greenChannel = `${nextColorHex[2]}${nextColorHex[3]}`;
-        blueChannel = `${nextColorHex[4]}${nextColorHex[5]}`;
-      }
-      const nextRed = parseInt(redChannel) + 1 < 16 ? parseInt(redChannel) + 1 : 15;
-      const nextGreen = parseInt(greenChannel) + 1 < 16 ? parseInt(greenChannel) + 1 : 15;
-      const nextBlue = parseInt(blueChannel) + 1 < 16 ? parseInt(blueChannel) + 1 : 15;
-      nextColorHex = `${nextRed.toString(16)}${nextGreen.toString(16)}${nextBlue.toString(16)}`;
-      newColorSet.push(nextColorHex);
-      if (nextColorHex === 'ffffff' || nextColorHex === 'fff') setLightColorGenerationComplete(true);
-    }
-    setLightColorSet(newColorSet);
-  }, [colorHex, lightColorSet, lightColorGenerationComplete]);
+    return;
+  };
 
   return (
     <div>
       Color Expander
       <Input onChange={handleChange} value={inputValue} />
-      {lightColorSet.slice(0).reverse().map((color) => <Result key={color} color={color} />)}
-      {darkColorSet.map((color) => <Result key={color} color={color} />)}
+      <button onClick={handleClick}>Go</button>
+      {colorSet.map((color) => <Result key={color} color={color} />)}
     </div>
   );
 };
