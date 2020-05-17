@@ -51,5 +51,5 @@ function darkenColor(color) {
           : nextBlueChannel}`;
     darkenedColors.push(nextColor);
   }
-  return darkenedColors;
+  return darkenedColors.reverse();
 }
