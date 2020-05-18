@@ -1,3 +1,18 @@
+export function formatHex (hex) {
+  if (hex.length === 3) return hex;
+  if (hex.length === 6) {
+    if (
+      hex[0] === hex[1] &&
+      hex[2] === hex[3] &&
+      hex[4] === hex[5]
+    ) {
+      return `${hex[0]}${hex[2]}${hex[4]}`;
+    } else {
+      return hex;
+    }
+  }
+}
+
 export function expandColor(color) {
   if (color === 'ffffff') {
     return [...darkenColor(color), color];
