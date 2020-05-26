@@ -15,7 +15,6 @@ const Input = styled.input``;
 const Results = styled.div`
   display: flex;
   align-items: center;
-  box-shadow : 0 0 1px 1px rgba(0,0,0,0.1);
   width: 100%;
 `;
 
