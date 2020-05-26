@@ -49,9 +49,11 @@ const Result = ({ color }) => (
 );
 
 function validateInput(input) {
+  console.log('INPUT LENGTH', input.length);
   if (input.length !== 3 && input.length !== 6) return false;
+  console.log('CHECKING CHARACTERS...', );
   for (let i = 0; i < input.length; i++) {
-    if (!parseInt(input[i], 16)) return false;
+    if (isNaN(parseInt(input[i], 16))) return false;
   }
   return true;
 }
