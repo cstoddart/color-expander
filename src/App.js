@@ -49,6 +49,14 @@ const Result = ({ color }) => (
   </StyledResult>
 );
 
+function validateInput(input) {
+  if (input.length !== 3 && input.length !== 6) return false;
+  for (let i = 0; i < input.length; i++) {
+    if (!parseInt(input[i], 16)) return false;
+  }
+  return true;
+}
+
 export const App = () => {
   const [inputValue, setInputValue] = useState('123456');
   const [primaryColorSetA, setPrimaryColorSetA] = useState([]);
@@ -96,7 +104,9 @@ export const App = () => {
   const handleChange = ({ target: { value } }) => inputValue[0] === '#'
     ? setInputValue(value.substring(1))
     : setInputValue(value);
+
   const handleClick = () => {
+    if (!validateInput(inputValue)) return;
     const colorHex = inputValue.length === 3
       ? `${inputValue[0]}${inputValue[0]}${inputValue[1]}${inputValue[1]}${inputValue[2]}${inputValue[2]}`
       : inputValue;

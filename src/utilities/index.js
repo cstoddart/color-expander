@@ -86,7 +86,6 @@ function combineColors(colorA, colorB) {
   if (redChannel === '0') redChannel = '00';
   if (greenChannel === '0') greenChannel = '00';
   if (blueChannel === '0') blueChannel = '00';
-  console.log('COLOR',  `${redChannel}${greenChannel}${blueChannel}`);
   return `${redChannel}${greenChannel}${blueChannel}`;
 }
 
