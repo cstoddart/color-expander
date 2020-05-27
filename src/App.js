@@ -27,7 +27,7 @@ const ResultTooltip = styled.div`
   box-shadow : 0 0 1px 1px rgba(0,0,0,0.1);
   z-index: 1;
   background-color: white;
-  opacity: 0;
+  display: none;
 `;
   
 const StyledResult = styled.div.attrs(({ color }) => ({
@@ -38,7 +38,7 @@ const StyledResult = styled.div.attrs(({ color }) => ({
   position: relative;
 
   &:hover ${ResultTooltip} {
-    opacity: 1;
+    display: initial;
   }
 `;
 
@@ -49,9 +49,7 @@ const Result = ({ color }) => (
 );
 
 function validateInput(input) {
-  console.log('INPUT LENGTH', input.length);
   if (input.length !== 3 && input.length !== 6) return false;
-  console.log('CHECKING CHARACTERS...', );
   for (let i = 0; i < input.length; i++) {
     if (isNaN(parseInt(input[i], 16))) return false;
   }

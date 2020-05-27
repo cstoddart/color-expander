@@ -33,16 +33,13 @@ function darkenColor(color) {
   const darkenedColors = [];
   while (nextColor !== '000000') {
     const [redChannel, greenChannel, blueChannel] = splitChannels(nextColor);
-    const nextRedChannel = ((parseInt(redChannel, 16) - 17 < 0) ? 0 : parseInt(redChannel, 16) - 17).toString(16);
-    const nextGreenChannel = ((parseInt(greenChannel, 16) - 17 < 0) ? 0 : parseInt(greenChannel, 16) - 17).toString(16);
-    const nextBlueChannel = ((parseInt(blueChannel, 16) - 17 < 0) ? 0 : parseInt(blueChannel, 16) - 17).toString(16);
-    nextColor = `${nextRedChannel.length === 1
-      ? `0${nextRedChannel}`
-      : nextRedChannel}${nextGreenChannel.length === 1
-        ? `0${nextGreenChannel}`
-        : nextGreenChannel}${nextBlueChannel.length === 1
-          ? `0${nextBlueChannel}`
-          : nextBlueChannel}`;
+    let nextRedChannel = ((parseInt(redChannel, 16) - 17 < 0) ? 0 : parseInt(redChannel, 16) - 17).toString(16);
+    let nextGreenChannel = ((parseInt(greenChannel, 16) - 17 < 0) ? 0 : parseInt(greenChannel, 16) - 17).toString(16);
+    let nextBlueChannel = ((parseInt(blueChannel, 16) - 17 < 0) ? 0 : parseInt(blueChannel, 16) - 17).toString(16);
+    if (nextRedChannel.length === 1) nextRedChannel = `0${nextRedChannel}`;
+    if (nextGreenChannel.length === 1) nextGreenChannel = `0${nextGreenChannel}`;
+    if (nextBlueChannel.length === 1) nextBlueChannel = `0${nextBlueChannel}`;
+    nextColor = `${nextRedChannel}${nextGreenChannel}${nextBlueChannel}`;
     darkenedColors.push(nextColor);
   }
   return darkenedColors.reverse();
@@ -53,16 +50,13 @@ function lightenColor(color) {
   const lightenedColors = [];
   while (nextColor !== 'ffffff') {
     const [redChannel, greenChannel, blueChannel] = splitChannels(nextColor);
-    const nextRedChannel = ((parseInt(redChannel, 16) + 17 > 255) ? parseInt(255).toString(16) : parseInt(redChannel, 16) + 17).toString(16);
-    const nextGreenChannel = ((parseInt(greenChannel, 16) + 17 > 255) ? parseInt(255).toString(16) : parseInt(greenChannel, 16) + 17).toString(16);
-    const nextBlueChannel = ((parseInt(blueChannel, 16) + 17 > 255) ? parseInt(255).toString(16) : parseInt(blueChannel, 16) + 17).toString(16);
-    nextColor = `${nextRedChannel.length === 1
-      ? `0${nextRedChannel}`
-      : nextRedChannel}${nextGreenChannel.length === 1
-        ? `0${nextGreenChannel}`
-        : nextGreenChannel}${nextBlueChannel.length === 1
-          ? `0${nextBlueChannel}`
-          : nextBlueChannel}`;
+    let nextRedChannel = ((parseInt(redChannel, 16) + 17 > 255) ? parseInt(255).toString(16) : parseInt(redChannel, 16) + 17).toString(16);
+    let nextGreenChannel = ((parseInt(greenChannel, 16) + 17 > 255) ? parseInt(255).toString(16) : parseInt(greenChannel, 16) + 17).toString(16);
+    let nextBlueChannel = ((parseInt(blueChannel, 16) + 17 > 255) ? parseInt(255).toString(16) : parseInt(blueChannel, 16) + 17).toString(16);  
+    if (nextRedChannel.length === 1) nextRedChannel = `0${nextRedChannel}`;
+    if (nextGreenChannel.length === 1) nextGreenChannel = `0${nextGreenChannel}`;
+    if (nextBlueChannel.length === 1) nextBlueChannel = `0${nextBlueChannel}`;
+    nextColor = `${nextRedChannel}${nextGreenChannel}${nextBlueChannel}`;
     lightenedColors.push(nextColor);
   }
   return lightenedColors;
@@ -83,9 +77,9 @@ function combineColors(colorA, colorB) {
   let redChannel = (parseInt(redChannelA, 16) + parseInt(redChannelB, 16) > 255) ? parseInt(255).toString(16) : (parseInt(redChannelA, 16) + parseInt(redChannelB, 16)).toString(16);
   let greenChannel = (parseInt(greenChannelA, 16) + parseInt(greenChannelB, 16) > 255) ? parseInt(255).toString(16) : (parseInt(greenChannelA, 16) + parseInt(greenChannelB, 16)).toString(16);
   let blueChannel = (parseInt(blueChannelA, 16) + parseInt(blueChannelB, 16) > 255) ? parseInt(255).toString(16) : (parseInt(blueChannelA, 16) + parseInt(blueChannelB, 16)).toString(16);
-  if (redChannel === '0') redChannel = '00';
-  if (greenChannel === '0') greenChannel = '00';
-  if (blueChannel === '0') blueChannel = '00';
+  if (redChannel.length === 1) redChannel = `0${redChannel}`;
+  if (greenChannel.length === 1) greenChannel = `0${greenChannel}`;
+  if (blueChannel.length === 1) blueChannel = `0${blueChannel}`;
   return `${redChannel}${greenChannel}${blueChannel}`;
 }
 
