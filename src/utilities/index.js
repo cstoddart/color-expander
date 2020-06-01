@@ -159,3 +159,14 @@ export function expandColor(color) {
     tertiaryColorSetF,
   ];
 }
+
+// return true if black text is suitable overlay for given color
+export function validateBlackContrast(color) {
+  const [redChannel, greenChannel, blueChannel] = splitChannels(color);
+  const red = parseInt(redChannel, 16);
+  const green = parseInt(greenChannel, 16);
+  const blue = parseInt(blueChannel, 16);
+  const contrast = red * 0.299 + green * 0.587 + blue * 0.114;
+
+  return contrast > 125 ? true : false;
+}

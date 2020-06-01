@@ -1,52 +1,80 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 
-import { expandColor, formatHex } from './utilities';
+import { expandColor, formatHex, validateBlackContrast } from './utilities';
 import { GlobalStyles } from './globalStyles';
 
 const StyledApp = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  background-color: black;
+  padding: 25px;
 `;
 
 const Input = styled.input``;
 
+const ResultsGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+
+  & + & {
+    margin-top: 25px;
+  }
+`;
+
+const ResultsGroupTitle = styled.div`
+  color: white;
+`;
+
 const Results = styled.div`
   display: flex;
   align-items: center;
-  width: 100%;
 `;
 
 const ResultTooltip = styled.div`
-  position: absolute;
-  top: 100%;
-  left: 0;
-  margin-top: 10px;
-  padding: 5px;
-  box-shadow : 0 0 1px 1px rgba(0,0,0,0.1);
+  letter-spacing: 0.5px;
   z-index: 1;
-  background-color: white;
-  display: none;
+  color: ${({ color }) => color};
+  opacity: 0;
+  visibility: hidden;
+  padding: 10px;
+  transition: opacity 0.2s linear 0.1s;
 `;
   
 const StyledResult = styled.div.attrs(({ color }) => ({
   style: { background: `#${color}` },
 }))`
-  width: 100px;
+  flex: 1;
   height: 100px;
+  min-width: 0;
   position: relative;
+  transition: 0.3s;
+  display: flex;
+  align-items: flex-end;
+
+  &:hover {
+    min-width: 100px;
+    border: ${({ contrastColor }) => `
+      2px solid ${contrastColor}
+    `};
+  }
 
   &:hover ${ResultTooltip} {
-    display: initial;
+    opacity: 1;
+    visibility: visible;
   }
 `;
 
-const Result = ({ color }) => (
-  <StyledResult color={color}>
-    <ResultTooltip>#{formatHex(color)}</ResultTooltip>
-  </StyledResult>
-);
+const Result = ({ color }) => {
+  const contrastColor = validateBlackContrast(color) ? 'black' : 'white';
+  return (
+    <StyledResult color={color} contrastColor={contrastColor}>
+      <ResultTooltip color={contrastColor}>#{formatHex(color)}</ResultTooltip>
+    </StyledResult>
+  );
+};
 
 function validateInput(input) {
   if (input.length !== 3 && input.length !== 6) return false;
@@ -146,69 +174,75 @@ export const App = () => {
       Color Expander
       <Input onChange={handleChange} value={inputValue} onKeyDown={handleKeyDown} />
       <button onClick={handleClick}>Go</button>
-      Primary
-      {!!primaryColorSetA.length && (
-        <Results>
-          {primaryColorSetA.map((color) => <Result key={color} color={color} />)}
-        </Results>
-      )}
-      {!!primaryColorSetB.length && (
-        <Results>
-          {primaryColorSetB.map((color) => <Result key={color} color={color} />)}
-        </Results>
-      )}
-      {!!primaryColorSetC.length && (
-        <Results>
-          {primaryColorSetC.map((color) => <Result key={color} color={color} />)}
-        </Results>
-      )}
-      Secondary
-      {!!secondaryColorSetA.length && (
-        <Results>
-          {secondaryColorSetA.map((color) => <Result key={color} color={color} />)}
-        </Results>
-      )}
-      {!!secondaryColorSetB.length && (
-        <Results>
-          {secondaryColorSetB.map((color) => <Result key={color} color={color} />)}
-        </Results>
-      )}
-      {!!secondaryColorSetC.length && (
-        <Results>
-          {secondaryColorSetC.map((color) => <Result key={color} color={color} />)}
-        </Results>
-      )}
-      Tertiary
-      {!!tertiaryColorSetA.length && (
-        <Results>
-          {tertiaryColorSetA.map((color) => <Result key={color} color={color} />)}
-        </Results>
-      )}
-      {!!tertiaryColorSetB.length && (
-        <Results>
-          {tertiaryColorSetB.map((color) => <Result key={color} color={color} />)}
-        </Results>
-      )}
-      {!!tertiaryColorSetC.length && (
-        <Results>
-          {tertiaryColorSetC.map((color) => <Result key={color} color={color} />)}
-        </Results>
-      )}
-      {!!tertiaryColorSetD.length && (
-        <Results>
-          {tertiaryColorSetD.map((color) => <Result key={color} color={color} />)}
-        </Results>
-      )}
-      {!!tertiaryColorSetE.length && (
-        <Results>
-          {tertiaryColorSetE.map((color) => <Result key={color} color={color} />)}
-        </Results>
-      )}
-      {!!tertiaryColorSetF.length && (
-        <Results>
-          {tertiaryColorSetF.map((color) => <Result key={color} color={color} />)}
-        </Results>
-      )}
+      <ResultsGroup>
+        <ResultsGroupTitle>Primary</ResultsGroupTitle>
+        {!!primaryColorSetA.length && (
+          <Results>
+            {primaryColorSetA.map((color) => <Result key={color} color={color} />)}
+          </Results>
+        )}
+        {!!primaryColorSetB.length && (
+          <Results>
+            {primaryColorSetB.map((color) => <Result key={color} color={color} />)}
+          </Results>
+        )}
+        {!!primaryColorSetC.length && (
+          <Results>
+            {primaryColorSetC.map((color) => <Result key={color} color={color} />)}
+          </Results>
+        )}
+      </ResultsGroup>
+      <ResultsGroup>
+        <ResultsGroupTitle>Secondary</ResultsGroupTitle>
+        {!!secondaryColorSetA.length && (
+          <Results>
+            {secondaryColorSetA.map((color) => <Result key={color} color={color} />)}
+          </Results>
+        )}
+        {!!secondaryColorSetB.length && (
+          <Results>
+            {secondaryColorSetB.map((color) => <Result key={color} color={color} />)}
+          </Results>
+        )}
+        {!!secondaryColorSetC.length && (
+          <Results>
+            {secondaryColorSetC.map((color) => <Result key={color} color={color} />)}
+          </Results>
+        )}
+      </ResultsGroup>
+      <ResultsGroup>
+        <ResultsGroupTitle>Tertiary</ResultsGroupTitle>
+        {!!tertiaryColorSetA.length && (
+          <Results>
+            {tertiaryColorSetA.map((color) => <Result key={color} color={color} />)}
+          </Results>
+        )}
+        {!!tertiaryColorSetB.length && (
+          <Results>
+            {tertiaryColorSetB.map((color) => <Result key={color} color={color} />)}
+          </Results>
+        )}
+        {!!tertiaryColorSetC.length && (
+          <Results>
+            {tertiaryColorSetC.map((color) => <Result key={color} color={color} />)}
+          </Results>
+        )}
+        {!!tertiaryColorSetD.length && (
+          <Results>
+            {tertiaryColorSetD.map((color) => <Result key={color} color={color} />)}
+          </Results>
+        )}
+        {!!tertiaryColorSetE.length && (
+          <Results>
+            {tertiaryColorSetE.map((color) => <Result key={color} color={color} />)}
+          </Results>
+        )}
+        {!!tertiaryColorSetF.length && (
+          <Results>
+            {tertiaryColorSetF.map((color) => <Result key={color} color={color} />)}
+          </Results>
+        )}
+      </ResultsGroup>
     </StyledApp>
   );
 };
