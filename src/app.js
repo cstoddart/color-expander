@@ -16,17 +16,35 @@ const StyledApp = styled.div`
   }
 `;
 
-const Logo = styled.div`
-  font-size: 24px;
-  font-weight: bold;
-  margin-bottom: 50px;
-`;
-
 const BackgroundColorToggle = styled.div`
   position: absolute;
   top: 50px;
   right: 50px;
   cursor: pointer;
+`;
+
+const CopiedToClipboardMessage = styled.div`
+  position: fixed;
+  top: -100px;
+  font-size: 14px;
+  padding: 5px 10px;
+  background-color: white;
+  color: black;
+  border: 2px solid black;
+  opacity: 0;
+  z-index: 1;
+  transition: 0.3s;
+
+  ${({ active }) => active && `
+    opacity: 1;
+    top: 0;
+  `}
+`;
+
+const Logo = styled.div`
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 50px;
 `;
 
 const ColorInput = styled.input`
@@ -92,7 +110,7 @@ const CopyToClipboardIcon = styled.div.attrs(({ backgroundColor }) => ({
     height: 8px;
     width: 6px;
     border: 1px solid ${({ color }) => color};
-    border-radius: 2px;
+    border-radius: 1px;
   }
 
   &:before {
@@ -205,6 +223,7 @@ export const App = () => {
   const [selectedColors, setSelectedColors] = useState([{ color: '123456', set: 'primaryA' }]);
   const [backgroundColor, setBackgroundColor] = useState('dark'); // dark \ light
   const [blendType, setBlendType] = useState('additive'); // additive | subtractive | average
+  const [showClipboardMessage, setShowClipboardMessage] = useState(false);
 
   const updateColorSets = useCallback(() => {
     if (!validateInput(inputValue)) return;
@@ -260,6 +279,14 @@ export const App = () => {
     ? setInputValue(value.substring(1))
     : setInputValue(value);
 
+  const handleColorClick = (color) => {
+    copyColorToClipboard(color);
+    setShowClipboardMessage(true);
+    setTimeout(() => {
+      setShowClipboardMessage(false);
+    }, 3000);
+  };
+
   const colorIsSelected = (color, set) => selectedColors.find((selectedColor) => (
     selectedColor.color === color && selectedColor.set === set
   ));
@@ -290,6 +317,7 @@ export const App = () => {
   return (
     <StyledApp>
       <GlobalStyles />
+      <CopiedToClipboardMessage active={showClipboardMessage}>Copied To Clipboard</CopiedToClipboardMessage>
       <BackgroundColorToggle onClick={toggleBackgroundColor}>
         {backgroundColor === 'dark' ? 'Light' : 'Dark'}
       </BackgroundColorToggle>
@@ -319,8 +347,8 @@ export const App = () => {
                   color={color}
                   contrastColor={validateBlackContrast(color) ? 'black' : 'white'}
                   isSelected={colorIsSelected(color, colorSet.id)}
-                  isLast={colorIndex === colorSet.length - 1}
-                  onClick={() => copyColorToClipboard(color)}
+                  isLast={colorIndex === colorSet.set.length - 1}
+                  onClick={() => handleColorClick(color)}
                 >
                   <CopyToClipboardIcon color={validateBlackContrast(color) ? 'black' : 'white'} backgroundColor={color} />
                   <Tooltip color={validateBlackContrast(color) ? 'black' : 'white'}>#{formatHex(color)}</Tooltip>
