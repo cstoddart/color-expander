@@ -171,6 +171,115 @@ const Color = styled.div.attrs(({ color, isLast }) => ({
   }
 `;
 
+const ColorWheelContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 210px;
+  width: 210px;
+  margin-top: 50px;
+`;
+
+const ColorWheel = styled.div`
+  position: relative;
+  height: 0;
+  width: 0;
+  z-index: 1;
+`;
+
+const wheelRadius = 80;
+const colorRadius = 30;
+/*
+    a   /|
+      /  |  b
+    /____|
+      c
+*/
+// 30-60-90 triangle trigonometry
+const a = wheelRadius - colorRadius;
+const b = (wheelRadius / 2) * Math.sqrt(3) - colorRadius;
+const c = wheelRadius / 2 - colorRadius;
+
+const ColorWheelColor = styled.div`
+  position: absolute;
+  height: ${colorRadius * 2}px;
+  width: ${colorRadius * 2}px;
+  background-color: #${({ color }) => color};
+  border-radius: ${colorRadius}px;
+  z-index: ${({ index }) => 0 - index};
+  transition: 0.2s;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 14px 7px;
+
+  ${({ index }) => {
+    return (
+      index === 0 ? `
+        bottom: ${a}px;
+        right: -${colorRadius}px;
+      ` : index === 1 ? `
+        top: ${c}px;
+        left: ${b}px;
+      ` : index === 2 ? `
+        top: ${c}px;
+        right: ${b}px;
+      ` : index === 3 ? `
+        bottom: ${c}px;
+        left: ${b}px;
+      ` : index === 4 ? `
+        top: ${a}px;
+        right: -${colorRadius}px;
+      ` : index === 5 ? `
+        bottom: ${c}px;
+        right: ${b}px;
+      ` : index === 6 ? `
+        bottom: ${b}px;
+        left: ${c}px;
+      ` : index === 7 ? `
+      left: ${a}px;
+      bottom: -${colorRadius}px;
+      ` : index === 8 ? `
+      top: ${b}px;
+      left: ${c}px;
+      ` : index === 9 ? `
+      top: ${b}px;
+      right: ${c}px;
+      ` : index === 10 ? `
+      right: ${a}px;
+      bottom: -${colorRadius}px;
+      ` : index === 11 ? `
+        bottom: ${b}px;
+        right: ${c}px;
+      ` : null
+    );
+  }}
+
+  &:hover {
+    transform: scale(1.3);
+    z-index: 12;
+  }
+
+  ${CopyToClipboardIcon} {
+    transform: scale(0.8) translateX(8px);
+    align-self: center;
+  }
+
+  ${Tooltip} {
+    font-size: 10px;
+    align-self: center;
+    padding-bottom: 5px;
+    letter-spacing: 0;
+  }
+
+  &:hover ${CopyToClipboardIcon},
+  &:hover ${Tooltip} {
+    opacity: 1;
+    visibility: visible;
+  }
+`;
+
 function validateInput(input) {
   if (input.length !== 3 && input.length !== 6) return false;
   for (let i = 0; i < input.length; i++) {
@@ -220,6 +329,7 @@ export const App = () => {
   const [tertiaryColorSetD, setTertiaryColorSetD] = useState([]);
   const [tertiaryColorSetE, setTertiaryColorSetE] = useState([]);
   const [tertiaryColorSetF, setTertiaryColorSetF] = useState([]);
+  const [colorWheelData, setColorWheelData] = useState([]);
   const [selectedColors, setSelectedColors] = useState([{ color: '123456', set: 'primaryA' }]);
   const [backgroundColor, setBackgroundColor] = useState('dark'); // dark \ light
   const [blendType, setBlendType] = useState('additive'); // additive | subtractive | average
@@ -243,6 +353,7 @@ export const App = () => {
       newTertiaryColorSetD,
       newTertiaryColorSetE,
       newTertiaryColorSetF,
+      newColorWheelData,
     ] = expandColor(colorHex, blendType);
     setPrimaryColorSetA(newPrimaryColorSetA);
     setPrimaryColorSetB(newPrimaryColorSetB);
@@ -256,6 +367,7 @@ export const App = () => {
     setTertiaryColorSetD(newTertiaryColorSetD);
     setTertiaryColorSetE(newTertiaryColorSetE);
     setTertiaryColorSetF(newTertiaryColorSetF);
+    setColorWheelData(newColorWheelData);
     setSelectedColors([{ color: colorHex, set: 'primaryA' }]);
     generateFavicon(colorHex);
   }, [blendType, inputValue])
@@ -334,6 +446,16 @@ export const App = () => {
           </BlendType>
         ))}
       </BlendTypes>
+      <ColorWheelContainer>
+        <ColorWheel>
+            {colorWheelData.map((color, index) => (
+              <ColorWheelColor key={index} color={color} index={index} onClick={() => handleColorClick(color)}>
+                <CopyToClipboardIcon color={validateBlackContrast(color) ? 'black' : 'white'} backgroundColor={color} />
+                <Tooltip color={validateBlackContrast(color) ? 'black' : 'white'}>#{formatHex(color)}</Tooltip>
+              </ColorWheelColor>
+            ))}
+        </ColorWheel>
+      </ColorWheelContainer>
       <ColorSets>
         {colorSets.map((colorSet, colorSetIndex) => (
           <Fragment key={colorSet.id}>

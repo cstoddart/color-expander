@@ -219,6 +219,20 @@ export function expandColor(color, blendType) {
   const tertiaryColorSetD = expandLightness(tertiaryColorD);
   const tertiaryColorSetE = expandLightness(tertiaryColorE);
   const tertiaryColorSetF = expandLightness(tertiaryColorF);
+  const colorWheelData = [
+    primaryColorA,
+    primaryColorB,
+    primaryColorC,
+    secondaryColorA,
+    secondaryColorB,
+    secondaryColorC,
+    tertiaryColorA,
+    tertiaryColorB,
+    tertiaryColorC,
+    tertiaryColorD,
+    tertiaryColorE,
+    tertiaryColorF,
+  ];
   return [
     primaryColorSetA,
     primaryColorSetB,
@@ -232,6 +246,7 @@ export function expandColor(color, blendType) {
     tertiaryColorSetD,
     tertiaryColorSetE,
     tertiaryColorSetF,
+    colorWheelData,
   ];
 }
 
