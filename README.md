@@ -1,1 +1,1 @@
-A tool for picking color schemes
+A tool for picking color schemes given a single color
