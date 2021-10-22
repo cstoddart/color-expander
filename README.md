@@ -1,3 +1,3 @@
-A tool for picking color schemes given a single color
+A new tool for picking color schemes given a single color
 
 https://colorexpander.com
